@@ -1,4 +1,5 @@
 # Importing the library
+import math
 import easygui
 from time import sleep
 import pygame
@@ -12,8 +13,7 @@ pygame.init()
 # Initializing surface
 #Toạ độ kết thúc của lưới toạ độ
 
-
-surface = pygame.display.set_mode((end_x+manager_x,end_y+20)) #tạo cửa sổ
+surface = pygame.display.set_mode((end_x+manager_x,end_y+20)) #tạo cửa sổ #1180x620
 surface.fill(white_color) # đổi màu background sang trắng
 pygame.display.set_caption('BT1') #Tên của sổ
 background = pygame.Surface((manager_x,end_y+20))#Tạo phần điều khiển
@@ -32,21 +32,76 @@ def draw_grid(start_x,end_x,start_y,end_y):
         PX.Put_pixel(surface,(end_x+start_x)/2,x,gray_color)
     for x in range(start_x,end_x,UNIT): #vẽ trục y
         PX.Put_pixel(surface,x,(end_y+start_y)/2,gray_color)
+    pygame_gui.elements.UILabel(relative_rect=pygame.Rect(500,0,40,20),
+                            text="Y",
+                            manager=manager)
+    pygame_gui.elements.UILabel(relative_rect=pygame.Rect(990,300,40,20),
+                        text="X",
+                        manager=manager)
 def PutPX(count,x,y,type):
     match type:
         case 1:
             if(count%3!=0):
                 PX.Put_pixel.revert(surface,x,y,red_color)
         case 2:
-            if(count%5!=0):
+            global dash_dot
+            if(count%5!=0 and count!= dash_dot):
                 PX.Put_pixel.revert(surface,x,y,red_color)
+            if(count==dash_dot):
+                dash_dot +=5
         case 3:
-            if(count%7!=0):
+            global dash_dash_dot
+            if(count%7!=0 and count!= dash_dash_dot):
                 PX.Put_pixel.revert(surface,x,y,red_color)
+            if(count==dash_dash_dot):
+                dash_dash_dot+=7
         case default:
             PX.Put_pixel.revert(surface,x,y,red_color)
+def draw_arrow(x1,y1,x2,y2):
+        Dx = (x2 - x1)
+        Dy = (y2 - y1)
+        arrowLength = round(math.sqrt(Dx ** 2 + Dy ** 2) / 6)
+        if (arrowLength < 3):
+            arrowLength = 3
+        angle = math.atan2(Dy, Dx)
+        x1_new = round(x2 - arrowLength * math.cos(angle - math.pi / 6))
+        y1_new = round(y2 - arrowLength * math.sin(angle - math.pi / 6))
+        x2_new = round(x2 - arrowLength * math.cos(angle + math.pi / 6))
+        y2_new = round(y2 - arrowLength * math.sin(angle + math.pi / 6))
 
-def draw_line(x1,y1,x2,y2,type=2):
+        draw_line(x2, y2, x1_new, y1_new)
+        draw_line(x2, y2, x2_new, y2_new)
+def draw_line(x1,y1,x2,y2,type=0):
+    ############## Sử dụng để vẽ nét đứt ###############
+    #khai báo biến toàn cục
+    global dash_dot
+    global dash_dash_dot
+    count=1
+    ############## END #################################
+    ############## Thuật toán vẽ đường thẳng khi các đường thẳng đứng hoặc nằm ngang ############
+    x = x1
+    y = y1
+    PX.Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
+    xUNIT = 1
+    yUNIT = 1; 
+    #xét trường hợp để cho yUNIT và xUNIT để vẽ tăng lên hay giảm xuống
+    if (x2 - x1 < 0):
+        xUNIT = -xUNIT
+    if (y2 - y1 < 0):
+        yUNIT = -yUNIT
+    if (x1 == x2):   # trường hợp vẽ đường thẳng đứng
+        while (y != y2):
+            y += yUNIT
+            count+=1
+            PutPX(count,x,y,type)
+ 
+    elif (y1 == y2):  #trường hợp vẽ đường ngang
+        while (x != x2):
+            x += xUNIT
+            count+=1
+            PutPX(count,x,y,type)
+    ##################### END #############################################
+    else:          # trường hợp vẽ các đường xiên -> sử dụng thuật toán bresenham
     #########Thuật toán Bresenham vẽ đường thẳng##############
     # Trường hợp hệ số góc 0 < m <= 1:
     # P = 2dy – dx
@@ -70,69 +125,55 @@ def draw_line(x1,y1,x2,y2,type=2):
 
     #vì sử dụng trị tuyệt đối cho Dx và Dy nên loại bỏ 2 trường hợp m>-1 và -1<= m < 0
     #############################################
-    count=1
-    Dx = abs(x2 - x1)
-    Dy = abs(y2 - y1)
-    m=0
-    if(Dx!=0):
-        m=Dy/Dx # hệ số góc
-    cross=0 #0<m<1
-    if(m>1):
-        p=2*Dx-Dy
-        cross=1#m>1
-    elif(m>=0 and m<=1):
-        p = 2*Dy - Dx
-    x = x1
-    y = y1
- 
-    xUNIT = 1
-    yUNIT = 1; 
-    #xét trường hợp để cho yUNIT và xUNIT để vẽ tăng lên hay giảm xuống
-    if (x2 - x1 < 0):
-        xUNIT = -xUNIT
-    if (y2 - y1 < 0):
-        yUNIT = -yUNIT
- 
-    if (x1 == x2):   # trường hợp vẽ đường thẳng đứng
-        PX.Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
-        while (y != y2+1):
-            count+=1
-            y += yUNIT
-            PutPX(count,x,y,type)
- 
-    elif (y1 == y2):  #trường hợp vẽ đường ngang
-        PX.Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
-        while (x != x2+1):
-            x += xUNIT
-            PX.Put_pixel.revert(surface,x,y,red_color)
-            
-    else:          # trường hợp vẽ các đường xiên
-        PX.Put_pixel.revert(surface,x,y,red_color)
-        while(x != x2):
-            if(cross):
+        Dx = abs(x2 - x1)
+        Dy = abs(y2 - y1)
+        m=Dy/Dx # trường hợp Dx = 0 đã được vẽ (đường thẳng đứng) 
+        if(m>1):
+            p=2*Dx-Dy
+            while(x != x2):
                 if (p<0) :
                     p += 2*Dx
                 else:
                     p += 2*(Dx-Dy)
                     x += xUNIT
                 y += yUNIT
-            else:
+                count+=1
+                PutPX(count,x,y,type)
+        else:
+            p = 2*Dy - Dx
+            while(x != x2):
                 if (p<0) :
                     p += 2*Dy
                 else:
                     p += 2*(Dy-Dx)
                     y += yUNIT
                 x += xUNIT
-            PX.Put_pixel.revert(surface,x,y,red_color)
-
+                count+=1
+                PutPX(count,x,y,type)
+    #trả lại giá trị ban đầu
+    dash_dot=3
+    dash_dash_dot=5
 def clear_screen():
     surface.fill(white_color) # đổi màu background sang trắng
     draw_grid(start_x,end_x,start_y,end_y) # vẽ lưới toạ độ
-
+def drar_rect(x1,y1,x2,y2):
+    x_max=x1
+    y_max=y1
+    x_min=x2
+    y_min=y2
+    if(x2>x1):
+        x_max=x2
+        x_min=x1
+    if(y2>y1):
+        y_max=y2
+        y_min=y1
+    for x in range(x_max-x_min):
+        for y in range(y_max-y_min):
+            PX.Put_pixel.revert(surface,x,y,red_color)
 #############Phần điều khiển####################
 bt_line = pygame_gui.elements.UIButton(
                             relative_rect=pygame.Rect(manager_x_axis+5,100,150,30),
-                            text='Draw Line',
+                            text='Duong thang',
                             manager=manager
                         )
 X1_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+30,20,40,30),
@@ -155,8 +196,33 @@ Y2_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_
 pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis+80,60,40,30),
                             text="Y2",
                             manager=manager)
+bt_dash = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,140,150,30),
+                            text='Net dut',
+                            manager=manager
+                        )
+bt_dash_dot = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,180,150,30),
+                            text='Net cham gach',
+                            manager=manager
+                        )
+bt_dash_dash_dot = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,220,150,30),
+                            text='Hai cham gach',
+                            manager=manager
+                        )
+bt_arrow = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,260,150,30),
+                            text='Net mui ten',
+                            manager=manager
+                        )
+bt_rect = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,300,150,30),
+                            text='Hinh chu nhat',
+                            manager=manager
+                        )
 bt_clear = pygame_gui.elements.UIButton(
-                            relative_rect=pygame.Rect(manager_x_axis+5,150,150,30),
+                            relative_rect=pygame.Rect(manager_x_axis+5,350,150,30),
                             text='Clear',
                             manager=manager
                         )
@@ -175,20 +241,50 @@ while isRunning:
         
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == bt_line:
-                    try:
+                try:
+                    if event.ui_element == bt_line:
                         x1=int(X1_axis.get_text())
                         y1=int(Y1_axis.get_text())
                         x2=int(X2_axis.get_text())
                         y2=int(Y2_axis.get_text())
                         draw_line(x1,y1,x2,y2)
-                    except ValueError:
-                        easygui.msgbox("X and Y not be empty", title="ERROR")
+                    if event.ui_element == bt_dash:
+                        x1=int(X1_axis.get_text())
+                        y1=int(Y1_axis.get_text())
+                        x2=int(X2_axis.get_text())
+                        y2=int(Y2_axis.get_text())
+                        draw_line(x1,y1,x2,y2,1)
+                    if event.ui_element == bt_dash_dot:
+                        x1=int(X1_axis.get_text())
+                        y1=int(Y1_axis.get_text())
+                        x2=int(X2_axis.get_text())
+                        y2=int(Y2_axis.get_text())
+                        draw_line(x1,y1,x2,y2,2)
+                    if event.ui_element == bt_dash_dash_dot:
+                        x1=int(X1_axis.get_text())
+                        y1=int(Y1_axis.get_text())
+                        x2=int(X2_axis.get_text())
+                        y2=int(Y2_axis.get_text())
+                        draw_line(x1,y1,x2,y2,3)
+                    if event.ui_element == bt_arrow:
+                        x1=int(X1_axis.get_text())
+                        y1=int(Y1_axis.get_text())
+                        x2=int(X2_axis.get_text())
+                        y2=int(Y2_axis.get_text())
+                        draw_line(x1,y1,x2,y2)
+                        draw_arrow(x1,y1,x2,y2)
+                    if event.ui_element == bt_rect:
+                        x1=int(X1_axis.get_text())
+                        y1=int(Y1_axis.get_text())
+                        x2=int(X2_axis.get_text())
+                        y2=int(Y2_axis.get_text())
+                        drar_rect(x1,y1,x2,y2)
+                except ValueError:
+                    easygui.msgbox("X and Y not be empty", title="ERROR")
                 if event.ui_element == bt_clear:
                     clear_screen()
         manager.process_events(event)
-
     manager.update(time_delta)
     manager.draw_ui(surface)
     pygame.display.update()
-    
+    # clear_screen()

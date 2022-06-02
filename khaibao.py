@@ -13,3 +13,6 @@ grid_x=end_x-start_x
 grid_y=end_y-start_y
 manager_x=180 #Kích thước chiều ngang phần điều khiển
 manager_x_axis = end_x+20 #Toạ độ bắt đầu của phần điều khiển
+#BT2
+dash_dot = 3
+dash_dash_dot=5
