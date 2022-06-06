@@ -122,14 +122,15 @@ while isRunning:
                         y1=int(Y1_axis.get_text())
                         x2=int(X2_axis.get_text())
                         y2=int(Y2_axis.get_text())
-                        # FC.Draw.line(surface,x1,y1,x2,y2,red_color,0)
+                        FC.Draw.line(surface,x1,y1,x2,y2,red_color,0)
                         FC.Draw.arrow(surface,x1,y1,x2,y2,red_color)
                     if event.ui_element == bt_rect:
                         x1=int(X1_axis.get_text())
                         y1=int(Y1_axis.get_text())
                         x2=int(X2_axis.get_text())
                         y2=int(Y2_axis.get_text())
-                        FC.Draw.rect(surface,x1,y1,x2,y2,red_color)
+                        # FC.Draw.rect(surface,x1,y1,x2,y2,red_color)
+                        FC.Draw.ellipse(surface,x1,y1,x2,y2,red_color)
                 # except ValueError:
                 #     easygui.msgbox("X and Y not be empty", title="ERROR")
                     if event.ui_element == bt_clear:

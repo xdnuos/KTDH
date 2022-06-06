@@ -253,28 +253,83 @@ class Draw():
         #trả lại giá trị ban đầu
         dash_dot=3
         dash_dash_dot=5
-    def ve8diem(surface,x0,y0,x,y):
-        Put_pixel.revert(surface,x0 + x , y0 + y ,red_color)
-        Put_pixel.revert(surface,x0 - x , y0 + y ,red_color)
-        Put_pixel.revert(surface,x0 + x , y0 - y ,red_color)
-        Put_pixel.revert(surface,x0 - x , y0 - y ,red_color)
-        Put_pixel.revert(surface,x0 + x , y0 + y ,red_color)
-        Put_pixel.revert(surface,x0 + y , y0 + x ,red_color)
-        Put_pixel.revert(surface,x0 - y , y0 + x ,red_color)
-        Put_pixel.revert(surface,x0 + y , y0 - x ,red_color)
-        Put_pixel.revert(surface,x0 - y , y0 - x ,red_color)
-    def circle(surface,x0,y0,r,dash=0):
+    def ve8diem(x0,y0,x,y,color,arr):
+        arr.append([x0 + x , y0 + y,color])
+        arr.append([x0 - x , y0 + y,color])
+        arr.append([x0 + x , y0 - y,color])
+        arr.append([x0 - x , y0 - y,color])
+        arr.append([x0 + y , y0 + x,color])
+        arr.append([x0 - y , y0 + x,color])
+        arr.append([x0 + y , y0 - x,color])
+        arr.append([x0 - y , y0 - x,color])
+        return arr
+    def circle(surface,x0,y0,r,color,type=0):
         x=0
         y=r
         p=3-2*r
-        count=0
+        arr=[]
         while (x<=y):
-            if(count%dash!=0):
-                Draw.ve8diem(x0,y0,x,y)
-            count+=1
+            arr = Draw.ve8diem(x0,y0,x,y,color,arr)
             if(p<0):
                 p=p+4*x+6
             else:
                 p=p+4*(x-y)+10
                 y=y-1
             x=x+1
+        arr =np.array(arr,dtype=object)
+        arr=Convert_coordinate.real2mon_arr(arr)
+        Put_pixel(surface,arr)
+    def ellipse(surface,x0,y0,r1,r2,color,type=0):
+        count=0
+        count1=0
+        x=0
+        y=r2
+        c=r2/r1
+        c=c*c
+        p=2*c-2*r2+1
+        arr=[]
+        while (c*x<=y):
+            if(type==1):
+                if(count%3!=0):
+                    # PX.Put_pixel.revert(surface,x0+x,y0+y,color)#1
+                    # PX.Put_pixel.revert(surface,x0-x,y0+y,color)#2
+                    arr.append([x0+x,y0+y,color])
+                    arr.append([x0-x,y0+y,color])
+                count+=1
+            else:
+                arr.append([x0+x,y0+y,color])
+                arr.append([x0-x,y0+y,color])
+            # PX.Put_pixel.revert(surface,x0+x,y0-y,color)#3
+            # PX.Put_pixel.revert(surface,x0-x,y0-y,color)#4
+            arr.append([x0+x,y0-y,color])
+            arr.append([x0-x,y0-y,color])
+            if (p<0):
+                p += 2*c*(2*x+3)
+            else:
+                    p +=4*(1-y)+2*c*(2*x+3)
+                    y-=1
+            x+=1
+        y=0;x=r1
+        c= r1/r2
+        c=c*c; p=2*c-2*r1+1
+        while (c*y<=x):
+            if(type==1):
+                if(count1%3!=0):
+                    # PX.Put_pixel.revert(surface,x0+x,y0+y,color)#1
+                    # PX.Put_pixel.revert(surface,x0-x,y0+y,color)#2
+                    arr.append([x0+x,y0+y,color])
+                    arr.append([x0-x,y0+y,color])
+                count1+=1
+            else:
+                arr.append([x0+x,y0+y,color])
+                arr.append([x0-x,y0+y,color])
+            arr.append([x0+x,y0-y,color])
+            arr.append([x0-x,y0-y,color])
+            if (p<0):
+                p +=2*c*(2*y+3)
+            else:
+                    p +=4*(1-x)+2*c*(2*y+3)
+                    x-=1
+            y+=1
+        arr = np.array(arr,dtype=object)
+        Put_pixel(surface,Convert_coordinate.real2mon_arr(arr))
