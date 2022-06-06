@@ -44,26 +44,26 @@ class Convert_coordinate:
             element[0]=element[0]-modulo_x
             element[1]=element[1]-modulo_y
         return arr
-    def remove_px(arr):
-        new_arr=[]
-        for x in arr:
-            if not(x[0] < start_x-2 or x[0] > end_x+2 or x[1] < start_y-2 or x[1] > end_y+2):
-                new_arr.append(x)
-        new_arr=np.array(new_arr)
-        return new_arr
-class Limit:
-    def x(x):
+class Limit: #loại bỏ các giá trị vượt ra khỏi ô hiển thị -> tăng tốc xử lý
+    def x(x):#dữ liệu vào là toạ độ thực tế
         if x < -round(grid_x/5/2):
             return -round(grid_x/5/2)
         if x > round(grid_x/5/2):
             return round(grid_x/5/2)
         return x
-    def y(y):
+    def y(y):#dữ liệu vào là toạ độ thực tế
         if y < -round(grid_y/5/2):
             return -round(grid_y/5/2)
         if y > round(grid_y/5/2):
             return round(grid_y/5/2)
         return y
+    def remove_px(arr): # dữ liệu vào là toạ độ màn hình
+        new_arr=[]
+        for x in arr:
+            if not(x[0] < start_x-2 or x[0] > end_x+2 or x[1] < start_y-2 or x[1] > end_y+2):
+                new_arr.append(x)
+        new_arr=np.array(new_arr,dtype=object)
+        return new_arr
 class Draw_grid:
     def __init__(self,surface,manager,start_x,end_x,start_y,end_y):
         #vẽ đƯờng ngang
@@ -75,6 +75,7 @@ class Draw_grid:
         #vẽ trục toạ độ
         pygame.draw.line(surface,black_color,(start_x,(end_y+start_y)/2),(end_x,(end_y+start_y)/2)) #trục y
         pygame.draw.line(surface,black_color,((end_x+start_x)/2,start_y),((end_x+start_x)/2,end_y)) #trục x
+        #vẽ chữ cho 2 trục
         pygame_gui.elements.UILabel(relative_rect=pygame.Rect(500,0,40,20),
                                 text="Y",
                                 manager=manager)
@@ -82,7 +83,7 @@ class Draw_grid:
                             text="X",
                             manager=manager)
 class Draw():
-    def rect(surface,x1,y1,x2,y2,color):
+    def rect(surface,x1,y1,x2,y2,color):#vẽ hình chữ nhật
         x1 = Limit.x(x1)
         x2 = Limit.x(x2)
         y1 = Limit.y(y1)
@@ -106,26 +107,46 @@ class Draw():
         put_arr = np.array(put_arr,dtype=object)
         put_arr = Convert_coordinate.real2mon_arr(put_arr)
         Put_pixel(surface,put_arr)
-    def PutPX(surface,count,x,y,type):
+    def PutPX(surface,arr,type):
+        count =0
+        new_arr=[]
         match type:
             case 1:
-                if(count%3!=0):
-                    Put_pixel.revert(surface,x,y,red_color)
+                for x in arr:
+                    count+=1
+                    if(count%3!=0):
+                        new_arr.append(x)
+                new_arr=np.array(new_arr,dtype=object)
+                new_arr=Convert_coordinate.real2mon_arr(new_arr)
+                Put_pixel(surface,new_arr)
             case 2:
                 global dash_dot
-                if(count%5!=0 and count!= dash_dot):
-                    Put_pixel.revert(surface,x,y,red_color)
-                if(count==dash_dot):
-                    dash_dot +=5
+                for x in arr:
+                    count+=1
+                    if(count%5!=0 and count!= dash_dot):
+                        new_arr.append(x)
+                    if(count==dash_dot):
+                        dash_dot +=5
+                new_arr=Convert_coordinate.real2mon_arr(new_arr)
+                Put_pixel(surface,new_arr)
             case 3:
                 global dash_dash_dot
-                if(count%7!=0 and count!= dash_dash_dot):
-                    Put_pixel.revert(surface,x,y,red_color)
-                if(count==dash_dash_dot):
-                    dash_dash_dot+=7
+                for x in arr:
+                    count+=1
+                    if(count%7!=0 and count!= dash_dash_dot):
+                        new_arr.append(x)
+                    if(count==dash_dash_dot):
+                        dash_dash_dot+=7
+                new_arr=Convert_coordinate.real2mon_arr(new_arr)
+                Put_pixel(surface,new_arr)
             case default:
-                Put_pixel.revert(surface,x,y,red_color)
-    def arrow(surface,x1,y1,x2,y2):
+                new_arr=Convert_coordinate.real2mon_arr(arr)
+                Put_pixel(surface,new_arr)
+    def arrow(surface,x1,y1,x2,y2,color):
+            x1 = Limit.x(x1)
+            x2 = Limit.x(x2)
+            y1 = Limit.y(y1)
+            y2 = Limit.y(y2)
             Dx = (x2 - x1)
             Dy = (y2 - y1)
             arrowLength = round(math.sqrt(Dx ** 2 + Dy ** 2) / 6)
@@ -136,20 +157,26 @@ class Draw():
             y1_new = round(y2 - arrowLength * math.sin(angle - math.pi / 6))
             x2_new = round(x2 - arrowLength * math.cos(angle + math.pi / 6))
             y2_new = round(y2 - arrowLength * math.sin(angle + math.pi / 6))
-
-            Draw.draw_line(surface,x2, y2, x1_new, y1_new)
-            Draw.draw_line(surface,x2, y2, x2_new, y2_new)
-    def line(surface,x1,y1,x2,y2,type=0):
+            Draw.line(surface,x2, y2, x1_new, y1_new,color)
+            Draw.line(surface,x2, y2, x2_new, y2_new,color)
+    def line(surface,x1,y1,x2,y2,color,type=0):
+        x1 = Limit.x(x1)
+        x2 = Limit.x(x2)
+        y1 = Limit.y(y1)
+        y2 = Limit.y(y2)
         ############## Sử dụng để vẽ nét đứt ###############
         #khai báo biến toàn cục
         global dash_dot
         global dash_dash_dot
-        count=1
+        # count=1
         ############## END #################################
         ############## Thuật toán vẽ đường thẳng khi các đường thẳng đứng hoặc nằm ngang ############
         x = x1
         y = y1
-        Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
+        arr=np.array([[x,y,color]],dtype=object) # KHAI BÁO MẢNG
+        # Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
+        arr = Convert_coordinate.real2mon_arr(arr)
+        Put_pixel(surface,arr)
         xUNIT = 1
         yUNIT = 1; 
         #xét trường hợp để cho yUNIT và xUNIT để vẽ tăng lên hay giảm xuống
@@ -160,13 +187,15 @@ class Draw():
         if (x1 == x2):   # trường hợp vẽ đường thẳng đứng
             while (y != y2):
                 y += yUNIT
-                count+=1
-                Draw.PutPX(surface,count,x,y,type)
+                # count+=1
+                # Draw.PutPX(surface,count,x,y,type)
+                arr = np.append(arr,[[x,y,color]],axis=0)
         elif (y1 == y2):  #trường hợp vẽ đường ngang
             while (x != x2):
                 x += xUNIT
-                count+=1
-                Draw.PutPX(surface,count,x,y,type)
+                # count+=1
+                # Draw.PutPX(surface,count,x,y,type)
+                arr = np.append(arr,[[x,y,color]],axis=0)
         ##################### END #############################################
         else:          # trường hợp vẽ các đường xiên -> sử dụng thuật toán bresenham
         #########Thuật toán Bresenham vẽ đường thẳng##############
@@ -204,8 +233,10 @@ class Draw():
                         p += 2*(Dx-Dy)
                         x += xUNIT
                     y += yUNIT
-                    count+=1
-                    Draw.PutPX(surface,count,x,y,type)
+                    # count+=1
+                    # Draw.PutPX(surface,count,x,y,type)
+                    arr = np.append(arr,[[x,y,color]],axis=0)
+
             else:
                 p = 2*Dy - Dx
                 while(x != x2):
@@ -215,8 +246,10 @@ class Draw():
                         p += 2*(Dy-Dx)
                         y += yUNIT
                     x += xUNIT
-                    count+=1
-                    Draw.PutPX(surface,count,x,y,type)
+                    # count+=1
+                    # Draw.PutPX(surface,count,x,y,type)
+                    arr = np.append(arr,[[x,y,color]],axis=0)
+        Draw.PutPX(surface,arr,type)
         #trả lại giá trị ban đầu
         dash_dot=3
         dash_dash_dot=5
