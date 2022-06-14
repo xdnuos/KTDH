@@ -43,6 +43,13 @@ class Convert_coordinate:
             element[0]=element[0]-modulo_x
             element[1]=element[1]-modulo_y
         return arr
+    def Chuyen_3Dto2D(x,y,z):
+        # alpha = math.pi / 4
+        # phi = math.pi / 4
+        # L = z / math.tan(alpha)
+        Xp = (x - z * math.sqrt(2) / 2)
+        Yp = (y - z * math.sqrt(2) / 2)
+        return Xp,Yp
 class Limit: #loại bỏ các giá trị vượt ra khỏi ô hiển thị -> tăng tốc xử lý
     def x(x):#dữ liệu vào là toạ độ thực tế
         if x < -round(grid_x/5/2):
