@@ -1,4 +1,3 @@
-from matplotlib.pyplot import axis
 import pygame
 from khaibao import *
 import pygame_gui
@@ -37,7 +36,7 @@ class Convert_coordinate:
             element[0] = element[0]*UNIT + int(grid_x/2)+20-2 # +20 là vì dịch lưới sang trái và xuống dưới 20px
             element[1] = -element[1]*UNIT + int(grid_y/2)+20-2
         return arr
-    def round(surface,arr):
+    def round(arr):
         for element in arr:
             modulo_x=(element[0]+2)%_UNIT#243 % 5 = 3
             modulo_y=(element[1]+2)%_UNIT#152 % 5 = 2
@@ -72,6 +71,7 @@ class Draw_grid:
         #vẽ đường dọc
         for y in range(start_y,end_y+UNIT,UNIT):
             pygame.draw.line(surface,gray_color,(start_y,y),(end_x,y))
+    def xy(surface,manager,start_x,end_x,start_y,end_y):
         #vẽ trục toạ độ
         pygame.draw.line(surface,black_color,(start_x,(end_y+start_y)/2),(end_x,(end_y+start_y)/2)) #trục y
         pygame.draw.line(surface,black_color,((end_x+start_x)/2,start_y),((end_x+start_x)/2,end_y)) #trục x
@@ -82,8 +82,35 @@ class Draw_grid:
         pygame_gui.elements.UILabel(relative_rect=pygame.Rect(990,300,40,20),
                             text="X",
                             manager=manager)
+    def xyz(surface,manager,start_x,end_x,start_y,end_y):
+                #vẽ trục toạ độ
+        pygame.draw.line(surface,black_color,((end_x+start_x)/2,(end_y+start_y)/2),(end_x,(end_y+start_y)/2)) #trục y
+        pygame.draw.line(surface,black_color,((end_x+start_x)/2,start_y),((end_x+start_x)/2,(end_y+start_y)/2)) #trục x
+        #vẽ chữ cho 2 trục
+        pygame_gui.elements.UILabel(relative_rect=pygame.Rect(500,0,40,20),
+                                text="Y",
+                                manager=manager)
+        pygame_gui.elements.UILabel(relative_rect=pygame.Rect(990,300,40,20),
+                            text="X",
+                            manager=manager)
+        pygame.draw.line(surface,black_color,(start_x,end_y),((end_x+start_x)/2,(end_y+start_y)/2)) #trục x
+        #vẽ chữ cho 2 trục
+        pygame_gui.elements.UILabel(relative_rect=pygame.Rect(20,600,40,20),
+                                text="Z",
+                                manager=manager)
 class Draw():
-    def rect(surface,x1,y1,x2,y2,color):#vẽ hình chữ nhật
+    def rect(x1,y1,x2,y2,color,type=0):
+        """type = 1 : vẽ nét đứt, mặc định là nét liền"""
+        x1 = Limit.x(x1)
+        x2 = Limit.x(x2)
+        y1 = Limit.y(y1)
+        y2 = Limit.y(y2)
+        arr1 = Draw.line(x1,y1,x2,y1,type)
+        arr2 = Draw.line(x1,y1,x1,y2,type)
+        arr3 = Draw.line(x2,y1,x2,y2,type)
+        arr4 = Draw.line(x1,y2,x2,y2,type)
+        return np.concatenate(arr1,arr2,arr3,arr4)
+    def rect_full(x1,y1,x2,y2,color):#vẽ hình chữ nhật
         x1 = Limit.x(x1)
         x2 = Limit.x(x2)
         y1 = Limit.y(y1)
@@ -102,12 +129,12 @@ class Draw():
         put_arr =[]
         for x in range(x_min,x_max+1): #20
             for y in range(y_min,y_max+1): #20
-                # Put_pixel.revert(surface,x,y,red_color)
                 put_arr.append([x,y,color]) #(0,0,red)?
         put_arr = np.array(put_arr,dtype=object)
         put_arr = Convert_coordinate.real2mon_arr(put_arr)
-        Put_pixel(surface,put_arr)
-    def PutPX(surface,arr,type):
+        return put_arr
+    def PutPX(arr,type):
+        """đã convert sang np và toạ độ màn hình"""
         count =0
         new_arr=[]
         match type:
@@ -118,7 +145,7 @@ class Draw():
                         new_arr.append(x)
                 new_arr=np.array(new_arr,dtype=object)
                 new_arr=Convert_coordinate.real2mon_arr(new_arr)
-                Put_pixel(surface,new_arr)
+                return new_arr
             case 2:
                 global dash_dot
                 for x in arr:
@@ -128,7 +155,7 @@ class Draw():
                     if(count==dash_dot):
                         dash_dot +=5
                 new_arr=Convert_coordinate.real2mon_arr(new_arr)
-                Put_pixel(surface,new_arr)
+                return new_arr
             case 3:
                 global dash_dash_dot
                 for x in arr:
@@ -138,11 +165,13 @@ class Draw():
                     if(count==dash_dash_dot):
                         dash_dash_dot+=7
                 new_arr=Convert_coordinate.real2mon_arr(new_arr)
-                Put_pixel(surface,new_arr)
+                return new_arr
             case default:
                 new_arr=Convert_coordinate.real2mon_arr(arr)
-                Put_pixel(surface,new_arr)
-    def arrow(surface,x1,y1,x2,y2,color):
+                return new_arr
+    def arrow(x1,y1,x2,y2,color):
+            arr1 =[]
+            arr2 =[]
             x1 = Limit.x(x1)
             x2 = Limit.x(x2)
             y1 = Limit.y(y1)
@@ -157,9 +186,12 @@ class Draw():
             y1_new = round(y2 - arrowLength * math.sin(angle - math.pi / 6))
             x2_new = round(x2 - arrowLength * math.cos(angle + math.pi / 6))
             y2_new = round(y2 - arrowLength * math.sin(angle + math.pi / 6))
-            Draw.line(surface,x2, y2, x1_new, y1_new,color)
-            Draw.line(surface,x2, y2, x2_new, y2_new,color)
-    def line(surface,x1,y1,x2,y2,color,type=0):
+            arr1 = Draw.line(x2, y2, x1_new, y1_new,color)
+            arr2 = Draw.line(x2, y2, x2_new, y2_new,color)
+            return np.concatenate((arr1,arr2))
+    def line(x1,y1,x2,y2,color,type=0):
+        """đã convert sang np và toạ độ màn hình\n
+        type 1: - - | type 2:-.- | type 3:--.--"""
         x1 = Limit.x(x1)
         x2 = Limit.x(x2)
         y1 = Limit.y(y1)
@@ -176,7 +208,7 @@ class Draw():
         arr=np.array([[x,y,color]],dtype=object) # KHAI BÁO MẢNG
         # Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
         arr = Convert_coordinate.real2mon_arr(arr)
-        Put_pixel(surface,arr)
+        # Put_pixel(surface,arr)
         xUNIT = 1
         yUNIT = 1; 
         #xét trường hợp để cho yUNIT và xUNIT để vẽ tăng lên hay giảm xuống
@@ -249,10 +281,10 @@ class Draw():
                     # count+=1
                     # Draw.PutPX(surface,count,x,y,type)
                     arr = np.append(arr,[[x,y,color]],axis=0)
-        Draw.PutPX(surface,arr,type)
         #trả lại giá trị ban đầu
         dash_dot=3
         dash_dash_dot=5
+        return Draw.PutPX(arr,type)
     def ve8diem(x0,y0,x,y,color,arr):
         arr.append([x0 + x , y0 + y,color])
         arr.append([x0 - x , y0 + y,color])
@@ -263,7 +295,7 @@ class Draw():
         arr.append([x0 + y , y0 - x,color])
         arr.append([x0 - y , y0 - x,color])
         return arr
-    def circle(surface,x0,y0,r,color,type=0):
+    def circle(x0,y0,r,color):
         x=0
         y=r
         p=3-2*r
@@ -278,8 +310,11 @@ class Draw():
             x=x+1
         arr =np.array(arr,dtype=object)
         arr=Convert_coordinate.real2mon_arr(arr)
-        Put_pixel(surface,arr)
-    def ellipse(surface,x0,y0,r1,r2,color,type=0):
+        return arr
+    def ellipse(x0,y0,r1,r2,color,type=0):
+        """
+        Type = 0 là nét liền | Type =1 là nét đứt nửa trên, nét liền nửa dưới
+        """
         count=0
         count1=0
         x=0
@@ -296,7 +331,7 @@ class Draw():
                     arr.append([x0+x,y0+y,color])
                     arr.append([x0-x,y0+y,color])
                 count+=1
-            else:
+            else: #type = 0 -> ellipse binh thường
                 arr.append([x0+x,y0+y,color])
                 arr.append([x0-x,y0+y,color])
             # PX.Put_pixel.revert(surface,x0+x,y0-y,color)#3
@@ -320,7 +355,7 @@ class Draw():
                     arr.append([x0+x,y0+y,color])
                     arr.append([x0-x,y0+y,color])
                 count1+=1
-            else:
+            else: #type = 0 -> ellipse binh thường
                 arr.append([x0+x,y0+y,color])
                 arr.append([x0-x,y0+y,color])
             arr.append([x0+x,y0-y,color])
@@ -332,4 +367,107 @@ class Draw():
                     x-=1
             y+=1
         arr = np.array(arr,dtype=object)
-        Put_pixel(surface,Convert_coordinate.real2mon_arr(arr))
+        return Convert_coordinate.real2mon_arr(arr)
+    def flip_arr(arr):
+        arr_len=len(arr) #4
+        count=arr_len-1 #3
+        for i in range(0,round(arr_len/2)): #4 lan
+            tmp = arr[i,0] #6
+            arr[i,0]= arr[count,0] # count =2 -> 9
+            arr[count,0]=tmp
+            # 1
+            tmp = arr[i,1] #6
+            arr[i,1]= arr[count,1] # count =2 -> 9
+            arr[count,1]=tmp
+            # 2
+            tmp = arr[i,2] #6
+            arr[i,2]= arr[count,2] # count =2 -> 9
+            arr[count,2]=tmp
+            count-=1
+        return arr
+    def remove_ellipse(arr,start,end):
+        """ Hàm này để loại bỏ các điểm thừa để vẽ cung cho eclipse"""
+        new_arr=[]
+        if (start > 360 or end >360):
+            start %= 360; end %= 360
+        if (start > end):
+            tmp = start
+            start = end
+            end = tmp
+        for x in arr:
+            if (x[3] >= start and x[3]<= end):
+                new_arr.append(x)
+        new_arr = np.array(new_arr,dtype=object)
+        return new_arr
+    def ellipse_2(x0,y0,r1,r2,color,start,end):
+        """
+        Vẽ ellipse với điểm đầu và điểm cuối do người dùng nhập vào\n
+        tâm(X),tâm(y),r1,r2,color,start,end
+        """
+        x=0
+        y=r2
+        c=r2/r1
+        c=c*c
+        p=2*c-2*r2+1
+        arr=[]
+        arr11=[]
+        arr12=[]
+        arr1=[]
+        arr2=[]
+        arr3=[]
+        arr4=[]
+        while (c*x<=y):#0->r2
+            arr11.append([x0+x,y0+y,color,x])#0-90
+            if (p<0):
+                p += 2*c*(2*x+3)
+            else:
+                p +=4*(1-y)+2*c*(2*x+3)
+                y-=1
+            x+=1
+        x2=x
+        y=0;x=r1
+        c= r1/r2
+        c=c*c; p=2*c-2*r1+1
+        while (c*y<=x):
+            arr12.append([x0+x,y0+y,color,x2])
+            if (p<0):
+                p +=2*c*(2*y+3)
+            else:
+                p +=4*(1-x)+2*c*(2*y+3)
+                x-=1
+            y+=1
+            x2+=1
+        
+        arr11 = np.array(arr11,dtype=object)
+        arr12 = np.array(arr12,dtype=object)
+        arr12 = Draw.flip_arr(arr12)
+        arr1 = np.concatenate((arr11,arr12))
+        # phần tư thứ 2
+        x2-=1
+        arr2 = np.flip(arr1.copy(),0) # xài copy vì arr1 bị thay đổi
+        for x in arr2:
+            x[1]=x[1]*-1
+            x[3]=x2
+            x2+=1
+        # phần tư thứ 3
+        x2-=1
+        arr3 = np.flip(arr2.copy(),0)
+        for x in arr3:
+            x[0]=x[0]*-1
+            x[3]=x2
+            x2+=1
+        # phần tư thứ 4
+        x2-=1
+        arr4 = np.flip(arr3.copy(),0)
+        for x in arr4:
+            x[1]=x[1]*-1
+            x[3]=x2
+            x2+=1
+        arr = np.concatenate((arr1,arr2,arr3,arr4))
+        # chuyển hệ số góc
+        x2-=1
+        for x in arr:
+            x[3]=round(x[3]/x2*360)
+        arr = Draw.remove_ellipse(arr,start,end)
+
+        return Convert_coordinate.real2mon_arr(arr)
