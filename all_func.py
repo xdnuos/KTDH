@@ -500,8 +500,8 @@ class Bien_doi():
         a = math.radians(a)
         for element in arr:
             x = element[0]; y = element[1]
-            element[0]= x1+math.cos(a)*(x-x1)-math.sin(a)*(y-y1)
-            element[1]= y1+math.cos(a)*(y-y1)+math.sin(a)*(x-x1)
+            element[0]= x1+math.cos(a)*(x-x1)-math.sin(a)*(y-y1) #x*cos(a)-y*sin(a)
+            element[1]= y1+math.cos(a)*(y-y1)+math.sin(a)*(x-x1) #y*cos(a)+x*sin(a)
         return Convert_coordinate.round(arr)
     def MT_tinh_tien(x,y):
         return np.array([[1,0,0],[0,1,0],[x,y,1]])
@@ -511,10 +511,18 @@ class Bien_doi():
         alpha = math.radians(alpha)
         return np.array([[math.cos(alpha),math.sin(alpha),0],[-math.sin(alpha),math.cos(alpha),0],[0,0,1]])
     def MT_doi_xung(type):
-        """type =1: Ox | type =2: Oy | type =3: O"""
+        """type =1: Ox | type =2: Oy | type =3: tâm O"""
         if type==1:
             return np.array([[1,0,0],[0,-1,0],[0,0,1]])
         if type==2:
             return np.array([[-1,0,0],[0,1,0],[0,0,1]])
         if type==3:
             return np.array([[-1,0,0],[0,-1,0],[0,0,1]])
+    def Nhan_MT(arr,mt):
+        for element in arr:
+            x = element[0]; y = element[1]
+            mt1 = np.array([x,y,1])
+            result=np.dot(mt1,mt)
+            element[0]= result[0]
+            element[1]= result[1]
+        return Convert_coordinate.round(arr)
