@@ -8,16 +8,16 @@ white_color = (255,255,255)
 class Put_pixel:
     def __init__(self,surface,arr):
         for element in arr:
-            pygame.draw.rect(surface, element[2], pygame.Rect(element[0], element[1], _UNIT, _UNIT))
+            pygame.draw.rect(surface, element[2], pygame.Rect(element[0]-2, element[1]-2, _UNIT, _UNIT))
     def de_put(surface,arr):
         for element in arr:
-            pygame.draw.rect(surface, white_color, pygame.Rect(element[0], element[1], _UNIT, _UNIT))
+            pygame.draw.rect(surface, white_color, pygame.Rect(element[0]-2, element[1]-2, _UNIT, _UNIT))
 class Convert_coordinate:
     def mon2real(x,y):
         modulo_x=x%UNIT
         modulo_y=y%UNIT
-        x = (x - modulo_x - end_x/2+start_x)/UNIT
-        y = (end_y/2 - (y-modulo_y)+start_y)/UNIT
+        x = (x - modulo_x - int(grid_x/2)-start_x)/UNIT
+        y = -(y - modulo_y - int(grid_y/2)-start_y)/UNIT
         return int(x),int(y)
     def real2mon(x,y):
         x = x*UNIT + int(grid_x/2)+20 # +20 là vì dịch lưới sang trái và xuống dưới 20px
@@ -25,23 +25,29 @@ class Convert_coordinate:
         return x,y
     def mon2real_arr(arr):
         for element in arr:
-            modulo_x=(element[0]+2)%UNIT
-            modulo_y=(element[1]+2)%UNIT
-            element[0] = (element[0] - modulo_x - end_x/2+start_x)/UNIT
-            element[1] = (end_y/2 - (element[1]-modulo_y)+start_y)/UNIT
+            modulo_x=element[0]%UNIT
+            modulo_y=element[1]%UNIT
+            element[0] = (element[0] - modulo_x - int(grid_x/2)-start_x)/UNIT
+            element[1] = -(element[1] - modulo_y - int(grid_y/2)-start_y)/UNIT
         return arr
     def real2mon_arr(arr):
         for element in arr:
             #(-98,10) -> (535,260)
-            element[0] = element[0]*UNIT + int(grid_x/2)+20-2 # +20 là vì dịch lưới sang trái và xuống dưới 20px
-            element[1] = -element[1]*UNIT + int(grid_y/2)+20-2
+            element[0] = element[0]*UNIT + int(grid_x/2)+20 # +20 là vì dịch lưới sang trái và xuống dưới 20px
+            element[1] = -element[1]*UNIT + int(grid_y/2)+20
         return arr
     def round(arr):
         for element in arr:
-            modulo_x=(element[0]+2)%_UNIT#243 % 5 = 3
-            modulo_y=(element[1]+2)%_UNIT#152 % 5 = 2
-            element[0]=element[0]-modulo_x
-            element[1]=element[1]-modulo_y
+            modulo_x=(element[0])%_UNIT#243 % 5 = 3
+            modulo_y=(element[1])%_UNIT#152 % 5 = 2
+            if modulo_x >2.5:
+                element[0]=element[0]+5-modulo_x
+            else:
+                element[0]=element[0]-modulo_x
+            if modulo_y > 2.5:
+                element[1]=element[1]+5-modulo_y
+            else:
+                element[1]=element[1]-modulo_y
         return arr
     def Chuyen_3Dto2D(x,y,z):
         # alpha = math.pi / 4
@@ -214,7 +220,6 @@ class Draw():
         y = y1
         arr=np.array([[x,y,color]],dtype=object) # KHAI BÁO MẢNG
         # Put_pixel.revert(surface,x,y,red_color)# vẽ điểm đầu tiên
-        arr = Convert_coordinate.real2mon_arr(arr)
         # Put_pixel(surface,arr)
         xUNIT = 1
         yUNIT = 1; 
@@ -405,11 +410,16 @@ class Draw():
             if (x[3] >= start and x[3]<= end):
                 new_arr.append(x)
         new_arr = np.array(new_arr,dtype=object)
-        return new_arr
-    def ellipse_2(x0,y0,r1,r2,color,start,end):
+        new_arr1 = np.zeros((int(new_arr.size/4),3),dtype=object)
+        for x in range(int(new_arr.size/4)):
+            new_arr1[x,0]=new_arr[x,0]
+            new_arr1[x,1]=new_arr[x,1]
+            new_arr1[x,2]=new_arr[x,2]
+        return new_arr1
+    def ellipse_2(r1,r2,color,start,end):
         """
         Vẽ ellipse với điểm đầu và điểm cuối do người dùng nhập vào\n
-        tâm(X),tâm(y),r1,r2,color,start,end
+        r1,r2,color,start,end
         """
         x=0
         y=r2
@@ -424,7 +434,7 @@ class Draw():
         arr3=[]
         arr4=[]
         while (c*x<=y):#0->r2
-            arr11.append([x0+x,y0+y,color,x])#0-90
+            arr11.append([x,y,color,x])#0-90
             if (p<0):
                 p += 2*c*(2*x+3)
             else:
@@ -436,7 +446,7 @@ class Draw():
         c= r1/r2
         c=c*c; p=2*c-2*r1+1
         while (c*y<=x):
-            arr12.append([x0+x,y0+y,color,x2])
+            arr12.append([x,y,color,x2])
             if (p<0):
                 p +=2*c*(2*y+3)
             else:
@@ -478,3 +488,33 @@ class Draw():
         arr = Draw.remove_ellipse(arr,start,end)
 
         return Convert_coordinate.real2mon_arr(arr)
+class Bien_doi():
+    def phep_quay(arr,x1,y1,a):
+        x1,y1 = Convert_coordinate.real2mon(x1,y1)
+        """quay arr quanh điểm X1,Y1 với góc quay a"""
+        # x2 = x1+cos(a)*(x-x1)-sin(a)*(y1-y)
+        # y2 = y1+cos(a)*(y-y1)+sin(a)*(x-x1)
+        # x[0] là x, x[1] là y
+        # (x-x1)cos(a) – (y-y1)sin(a) + x1
+        # (x-x1)sin(a) +  (y-y1)cos(a)+y1
+        a = math.radians(a)
+        for element in arr:
+            x = element[0]; y = element[1]
+            element[0]= x1+math.cos(a)*(x-x1)-math.sin(a)*(y-y1)
+            element[1]= y1+math.cos(a)*(y-y1)+math.sin(a)*(x-x1)
+        return Convert_coordinate.round(arr)
+    def MT_tinh_tien(x,y):
+        return np.array([[1,0,0],[0,1,0],[x,y,1]])
+    def MT_ti_le(Sx,Sy):
+        return np.array([[Sx,0,0],[0,Sy,0],[0,0,1]])
+    def MT_quay(alpha):
+        alpha = math.radians(alpha)
+        return np.array([[math.cos(alpha),math.sin(alpha),0],[-math.sin(alpha),math.cos(alpha),0],[0,0,1]])
+    def MT_doi_xung(type):
+        """type =1: Ox | type =2: Oy | type =3: O"""
+        if type==1:
+            return np.array([[1,0,0],[0,-1,0],[0,0,1]])
+        if type==2:
+            return np.array([[-1,0,0],[0,1,0],[0,0,1]])
+        if type==3:
+            return np.array([[-1,0,0],[0,-1,0],[0,0,1]])
