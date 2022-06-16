@@ -53,8 +53,8 @@ class Convert_coordinate:
         # alpha = math.pi / 4
         # phi = math.pi / 4
         # L = z / math.tan(alpha)
-        Xp = round(x - z * math.sqrt(2) / 2)
-        Yp = round(y - z * math.sqrt(2) / 2)
+        Xp = int(x - z * math.sqrt(2) / 2)
+        Yp = int(y - z * math.sqrt(2) / 2)
         return Xp,Yp
 class Limit: #loại bỏ các giá trị vượt ra khỏi ô hiển thị -> tăng tốc xử lý
     def x(x):#dữ liệu vào là toạ độ thực tế
