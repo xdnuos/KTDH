@@ -106,7 +106,7 @@ class Draw_grid:
         pygame_gui.elements.UILabel(relative_rect=pygame.Rect(990,300,40,20),
                             text="X",
                             manager=manager)
-        pygame.draw.line(surface,black_color,(start_x,end_y),((end_x+start_x)/2,(end_y+start_y)/2)) #trục x
+        pygame.draw.line(surface,black_color,(end_x/4-30,end_y),((end_x+start_x)/2,(end_y+start_y)/2)) #trục z
         #vẽ chữ cho 2 trục
         pygame_gui.elements.UILabel(relative_rect=pygame.Rect(20,600,40,20),
                                 text="Z",
