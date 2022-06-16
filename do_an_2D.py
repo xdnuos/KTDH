@@ -98,7 +98,54 @@ FC.Draw_grid.xy(surface,manager,start_x,end_x,start_y,end_y)
 while isRunning:
     time_delta = clock.tick(60)/1000.0
     surface.blit(background,(manager_x_axis,0))#ghi đè lên cửa sổ
-
+    face= FC.Draw.ellipse_2(20,20,red_color,0,140)
+    face = np.concatenate((face,FC.Draw.ellipse_2(20,20,red_color,220,360)))
+    face = np.concatenate((face,FC.Draw.rect(-12,-16,12,-18,red_color)))
+    mat = FC.Draw.ellipse_2(20,25,red_color,35,125)
+    mat = FC.Bien_doi.Nhan_MT(mat,FC.Bien_doi.MT_tinh_tien(-100,20))
+    eye = FC.Draw.ellipse_2(3,5,red_color,40,230)
+    eye = FC.Bien_doi.phep_quay(eye,0,0,20)
+    eye = FC.Bien_doi.Nhan_MT(eye,FC.Bien_doi.MT_tinh_tien(-50,-75))
+    dau = np.concatenate((face,mat,eye))
+    dau = FC.Bien_doi.phep_quay(dau,0,0,-20)
+    mui = FC.Draw.circle(-19,8,2,black_color)
+    mong = FC.Draw.ellipse_2(20,15,red_color,25,80)
+    mong = FC.Bien_doi.Nhan_MT(mong,FC.Bien_doi.MT_tinh_tien(50,140))
+    bung = FC.Draw.ellipse_2(20,15,red_color,180,300)
+    bung = FC.Bien_doi.Nhan_MT(bung,FC.Bien_doi.MT_tinh_tien(70,140))
+    chan = FC.Draw.line(14,-44,30,-42,red_color)
+    chan = np.concatenate((chan,FC.Draw.line(30,-25,32,-26,red_color),FC.Draw.ellipse(35,-35,6,8,red_color)))
+    chuong = FC.Draw.circle(-6,-20,2,black_color)
+    tay = FC.Draw.line(3,-21,8,-14,black_color)
+    tay = np.concatenate((tay,FC.Draw.line(13,-24,15,-17,black_color),FC.Draw.circle(13,-13,4,black_color)))
+    bung_duoi = FC.Draw.ellipse_2(20,15,red_color,0,100)
+    bung_duoi = FC.Bien_doi.Nhan_MT(bung_duoi,FC.Bien_doi.MT_tinh_tien(-25,200))
+    tui = FC.Draw.ellipse_2(8,8,red_color,30,100)
+    tui = FC.Bien_doi.Nhan_MT(tui,FC.Bien_doi.MT_tinh_tien(0,200))
+    tui = np.concatenate((tui,FC.Draw.line(0,-37,4,-33,red_color)))
+    duoi = np.concatenate((FC.Draw.circle(36,-18,2,red_color),FC.Draw.line(33,-20,30,-22,red_color)))
+    chong_chong = FC.Draw.ellipse_2(3,3,red_color,0,120)
+    chong_chong = np.concatenate((chong_chong,FC.Draw.ellipse_2(3,3,red_color,270,360)))
+    chong_chong = FC.Bien_doi.Nhan_MT(chong_chong,FC.Bien_doi.MT_tinh_tien(30,-100))
+    chong_chong = np.concatenate((chong_chong,FC.Draw.line(7,23,8,28,red_color)))
+    canh_quat = FC.Draw.ellipse_2(6,3,black_color,0,360)
+    canh_quat = FC.Bien_doi.phep_quay(canh_quat,0,0,10)
+    canh_quat = FC.Bien_doi.Nhan_MT(canh_quat,FC.Bien_doi.MT_tinh_tien(40,-140))
+    chong_chong = np.concatenate((chong_chong,canh_quat))
+    mieng = FC.Draw.ellipse_2(10,10,red_color,90,160)
+    mieng = FC.Bien_doi.Nhan_MT(mieng,FC.Bien_doi.MT_tinh_tien(-90,20))
+    chi_tiet_mat = np.concatenate((mui,mieng,FC.Draw.line(-8,0,1,6,black_color),FC.Draw.line(-5,-3,5,2,black_color),FC.Draw.line(-4,-6,5,-4,black_color),chuong,chong_chong))
+    phan_than = np.concatenate((mong,bung,chan,duoi,bung_duoi))
+    linh_kien = np.concatenate((tui,tay))
+    # face = np.concatenate((face,FC.Dr))
+    # a,b = FC.Convert_coordinate.real2mon(0,0)
+    # mt=np.dot(FC.Bien_doi.MT_tinh_tien(-a,-b),FC.Bien_doi.MT_quay(-20))
+    # mt=np.dot(mt,FC.Bien_doi.MT_tinh_tien(a,b))
+    # face = FC.Bien_doi.Nhan_MT(face,mt)
+    FC.Put_pixel(surface,dau)
+    FC.Put_pixel(surface,phan_than)
+    # FC.Put_pixel(surface,linh_kien)
+    # FC.Put_pixel(surface,chi_tiet_mat)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
@@ -106,20 +153,8 @@ while isRunning:
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 # try:
-                    if event.ui_element == bt_line:
-                        arr= FC.Draw.ellipse_2(20,20,red_color,0,140)
-                        arr = np.concatenate((arr,FC.Draw.ellipse_2(20,20,red_color,220,360)))
-                        arr = np.concatenate((arr,FC.Draw.rect(-12,-16,12,-18,red_color)))
-                        mat = FC.Draw.ellipse_2(20,20,red_color,0,360)
-                        mat = FC.Bien_doi.Nhan_MT(mat,FC.Bien_doi.MT_tinh_tien(20,20))
-                        arr = np.concatenate((arr,FC.Draw.ellipse_2(20,20,red_color,0,360)))
-                        # arr = FC.Bien_doi.phep_quay(arr,0,0,90)
-                        # a,b = FC.Convert_coordinate.real2mon(0,0)
-                        # mt=np.dot(FC.Bien_doi.MT_tinh_tien(-a,-b),FC.Bien_doi.MT_quay(90))
-                        # mt=np.dot(mt,FC.Bien_doi.MT_tinh_tien(a,b))
-                        # arr = FC.Bien_doi.Nhan_MT(arr,mt)
-                        FC.Put_pixel(surface,mat)
-                        FC.Put_pixel(surface,arr)
+                    # if event.ui_element == bt_line:
+
                     # if event.ui_element == bt_dash:
                     #     x1=int(X1_axis.get_text())
                     #     y1=int(Y1_axis.get_text())
