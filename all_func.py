@@ -40,11 +40,11 @@ class Convert_coordinate:
         for element in arr:
             modulo_x=(element[0])%_UNIT#243 % 5 = 3
             modulo_y=(element[1])%_UNIT#152 % 5 = 2
-            if modulo_x >2.5:
+            if modulo_x >=2.5:
                 element[0]=element[0]+5-modulo_x
             else:
                 element[0]=element[0]-modulo_x
-            if modulo_y > 2.5:
+            if modulo_y >= 2.5:
                 element[1]=element[1]+5-modulo_y
             else:
                 element[1]=element[1]-modulo_y
@@ -53,8 +53,8 @@ class Convert_coordinate:
         # alpha = math.pi / 4
         # phi = math.pi / 4
         # L = z / math.tan(alpha)
-        Xp = (x - z * math.sqrt(2) / 2)
-        Yp = (y - z * math.sqrt(2) / 2)
+        Xp = round(x - z * math.sqrt(2) / 2)
+        Yp = round(y - z * math.sqrt(2) / 2)
         return Xp,Yp
 class Limit: #loại bỏ các giá trị vượt ra khỏi ô hiển thị -> tăng tốc xử lý
     def x(x):#dữ liệu vào là toạ độ thực tế
