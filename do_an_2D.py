@@ -147,10 +147,10 @@ may2 = FC.Draw.ellipse_2(8,8,pink_dark_color,80,180)
 may2 = FC.Bien_doi.Nhan_MT(may2,FC.Bien_doi.MT_tinh_tien(0,160))
 may = np.concatenate((may,may1,may2,FC.Draw.line(0,0,0,-40,pink_dark_color)))
 may = FC.Bien_doi.phep_quay(may,0,0,-90)
-FC.Put_pixel(surface,may)
 a,b = FC.Convert_coordinate.real2mon(20,3)
-FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may)
-# FC.Put_pixel(surface,doraemon)
+FC.Put_pixel(surface,may)
+may_to_mau = []
+may_to_mau= FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may_to_mau)
 count =0
 bool = 5
 while isRunning:
@@ -167,7 +167,8 @@ while isRunning:
         count =0
     doraemon = FC.Bien_doi.Nhan_MT(doraemon,FC.Bien_doi.MT_tinh_tien(0,bool))
     FC.Put_pixel(surface,doraemon)
-
+    FC.Put_pixel(surface,may)
+    FC.Put_pixel(surface,may_to_mau)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False

@@ -589,9 +589,10 @@ class To_mau():
     def loang(surface,x,y,mau_bien,mau_to,arr):
         mau_hien_tai = surface.get_at((x+1,y+1))[:3]
         if(mau_hien_tai!=mau_bien and mau_hien_tai != mau_to):
-            # arr = np.append(arr,[[x,y,mau_to]],axis=0)
+            arr.append([x,y,mau_to])
             Put_pixel.point(surface,x,y,mau_to)
             To_mau.loang(surface,x-5,y,mau_bien,mau_to,arr)
             To_mau.loang(surface,x+5,y,mau_bien,mau_to,arr)
             To_mau.loang(surface,x,y-5,mau_bien,mau_to,arr)
             To_mau.loang(surface,x,y+5,mau_bien,mau_to,arr)
+        return np.array(arr,dtype=object)
