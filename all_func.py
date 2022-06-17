@@ -325,6 +325,25 @@ class Draw():
         arr =np.array(arr,dtype=object)
         arr=Convert_coordinate.real2mon_arr(arr)
         return arr
+    def circle_fill(x0,y0,r,color,color1):
+        x=0
+        y=r
+        p=3-2*r
+        arr=[]
+        while (x<=y):
+            for i in range(x+1):
+                Draw.ve8diem(x0,y0,i-1,y-1,color1,arr)
+                Draw.ve8diem(x0,y0,x-1,i-1,color1,arr)
+            arr = Draw.ve8diem(x0,y0,x,y,color,arr)
+            if(p<0):
+                p=p+4*x+6
+            else:
+                p=p+4*(x-y)+10
+                y=y-1
+            x=x+1
+        arr =np.array(arr,dtype=object)
+        arr=Convert_coordinate.real2mon_arr(arr)
+        return arr
     def ellipse(x0,y0,r1,r2,color,type=0):
         """
         Type = 0 là nét liền | Type =1 là nét đứt nửa trên, nét liền nửa dưới
@@ -374,6 +393,44 @@ class Draw():
                 arr.append([x0-x,y0+y,color])
             arr.append([x0+x,y0-y,color])
             arr.append([x0-x,y0-y,color])
+            if (p<0):
+                p +=2*c*(2*y+3)
+            else:
+                    p +=4*(1-x)+2*c*(2*y+3)
+                    x-=1
+            y+=1
+        arr = np.array(arr,dtype=object)
+        return Convert_coordinate.real2mon_arr(arr)
+    def ve4diem_ellipse(x0,y0,x,y,color,arr):
+        arr.append([x0+x,y0+y,color])
+        arr.append([x0-x,y0+y,color])
+        arr.append([x0+x,y0-y,color])
+        arr.append([x0-x,y0-y,color])
+        return arr
+    def ellipse_fill(x0,y0,r1,r2,color1,color2):
+        x=0
+        y=r2
+        c=r2/r1
+        c=c*c
+        p=2*c-2*r2+1
+        arr=[]
+        while (c*x<=y):
+            for i in range(x+1):
+                Draw.ve4diem_ellipse(x0,y0,i,y-1,color2,arr)
+            Draw.ve4diem_ellipse(x0,y0,x,y,color1,arr)
+            if (p<0):
+                p += 2*c*(2*x+3)
+            else:
+                    p +=4*(1-y)+2*c*(2*x+3)
+                    y-=1
+            x+=1
+        y=0;x=r1
+        c= r1/r2
+        c=c*c; p=2*c-2*r1+1
+        while (c*y<=x):
+            for i in range(x+1):
+                Draw.ve4diem_ellipse(x0,y0,i-1,y,color2,arr)
+            Draw.ve4diem_ellipse(x0,y0,x,y,color1,arr)
             if (p<0):
                 p +=2*c*(2*y+3)
             else:
@@ -513,7 +570,7 @@ class Bien_doi():
         alpha = math.radians(alpha)
         return np.array([[math.cos(alpha),math.sin(alpha),0],[-math.sin(alpha),math.cos(alpha),0],[0,0,1]])
     def MT_doi_xung(type):
-        """type =1: Ox | type =2: Oy | type =3: tâm O"""
+        """type =2: Ox | type =1: Oy | type =3: tâm O"""
         if type==1:
             return np.array([[1,0,0],[0,-1,0],[0,0,1]])
         if type==2:
@@ -530,22 +587,11 @@ class Bien_doi():
         return Convert_coordinate.round(arr)
 class To_mau():
     def loang(surface,x,y,mau_bien,mau_to,arr):
-        mau_hien_tai = To_mau.get_color(x,y,arr)
-        # mau_hien_tai = surface.get_at((x+1,y+1))[:3]
-        print(mau_hien_tai,mau_bien,mau_to)
+        mau_hien_tai = surface.get_at((x+1,y+1))[:3]
         if(mau_hien_tai!=mau_bien and mau_hien_tai != mau_to):
-            arr = np.append(arr,[[x,y,mau_to]],axis=0)
-            # Put_pixel.point(surface,x,y,mau_to)
-            print("a")
+            # arr = np.append(arr,[[x,y,mau_to]],axis=0)
+            Put_pixel.point(surface,x,y,mau_to)
             To_mau.loang(surface,x-5,y,mau_bien,mau_to,arr)
             To_mau.loang(surface,x+5,y,mau_bien,mau_to,arr)
             To_mau.loang(surface,x,y-5,mau_bien,mau_to,arr)
             To_mau.loang(surface,x,y+5,mau_bien,mau_to,arr)
-        return(arr)
-    def get_color(x,y,arr):
-        # tìm kiếm trong mảng, nếu toạ độ trùng thì return màu của toạ độ đó trong mảng
-        # nếu k trùng thì return về màu trắng
-        for e in arr:
-            if (x == e[0] and y == e[1]):
-                return e[2]
-        return (-1,-1,-1)
