@@ -12,6 +12,8 @@ class Put_pixel:
     def de_put(surface,arr):
         for element in arr:
             pygame.draw.rect(surface, white_color, pygame.Rect(element[0]-2, element[1]-2, _UNIT, _UNIT))
+    def point(surface,x,y,color):
+        pygame.draw.rect(surface, color, pygame.Rect(x-2, y-2, _UNIT, _UNIT))
 class Convert_coordinate:
     def mon2real(x,y):
         modulo_x=x%UNIT
@@ -108,7 +110,7 @@ class Draw_grid:
                             manager=manager)
         pygame.draw.line(surface,black_color,(end_x/4-30,end_y),((end_x+start_x)/2,(end_y+start_y)/2)) #trục z
         #vẽ chữ cho 2 trục
-        pygame_gui.elements.UILabel(relative_rect=pygame.Rect(20,600,40,20),
+        pygame_gui.elements.UILabel(relative_rect=pygame.Rect(end_x/4-50,600,40,20),
                                 text="Z",
                                 manager=manager)
 class Draw():
@@ -526,3 +528,24 @@ class Bien_doi():
             element[0]= result[0]
             element[1]= result[1]
         return Convert_coordinate.round(arr)
+class To_mau():
+    def loang(surface,x,y,mau_bien,mau_to,arr):
+        mau_hien_tai = To_mau.get_color(x,y,arr)
+        # mau_hien_tai = surface.get_at((x+1,y+1))[:3]
+        print(mau_hien_tai,mau_bien,mau_to)
+        if(mau_hien_tai!=mau_bien and mau_hien_tai != mau_to):
+            arr = np.append(arr,[[x,y,mau_to]],axis=0)
+            # Put_pixel.point(surface,x,y,mau_to)
+            print("a")
+            To_mau.loang(surface,x-5,y,mau_bien,mau_to,arr)
+            To_mau.loang(surface,x+5,y,mau_bien,mau_to,arr)
+            To_mau.loang(surface,x,y-5,mau_bien,mau_to,arr)
+            To_mau.loang(surface,x,y+5,mau_bien,mau_to,arr)
+        return(arr)
+    def get_color(x,y,arr):
+        # tìm kiếm trong mảng, nếu toạ độ trùng thì return màu của toạ độ đó trong mảng
+        # nếu k trùng thì return về màu trắng
+        for e in arr:
+            if (x == e[0] and y == e[1]):
+                return e[2]
+        return (-1,-1,-1)
