@@ -1,10 +1,5 @@
 # Importing the library
-import math
-from turtle import color
-import turtle
-import easygui
 from time import sleep
-from matplotlib.pyplot import sca
 import pygame
 import all_func as FC
 import pygame_gui
@@ -21,86 +16,52 @@ manager = pygame_gui.UIManager((end_x+manager_x,end_y+20))
 surface = pygame.display.set_mode((end_x+manager_x,end_y+20)) #tạo cửa sổ #1180x620
 surface.fill(white_color) # đổi màu background sang trắng
 pygame.display.set_caption('do an cuoi ki') #Tên của sổ
-background = pygame.Surface((manager_x,end_y+20))#Tạo phần điều khiển
+# width,height
+background = pygame.Surface((manager_x,170))#Tạo phần điều khiển
 background.fill(gray_black_color) #background của phần điều khiển
+
+background1 = pygame.Surface((end_x+20,20))#Tạo phần điều khiển
+background1.fill(white_color) #background của phần điều khiển
+
+background2 = pygame.Surface((end_x+19,20))#Tạo phần điều khiển
+background2.fill(white_color) #background của phần điều khiển
+
+background3 = pygame.Surface((20,grid_y))#Tạo phần điều khiển
+background3.fill(white_color) #background của phần điều khiển
+
+background4 = pygame.Surface((19,grid_y))#Tạo phần điều khiển
+background4.fill(white_color) #background của phần điều khiển
 ###################################
-def clear_screen():
+def clear_screen(isGrid):
     surface.fill(white_color) # đổi màu background sang trắng
     # pygame.draw.rect(surface,red_color,pygame.Rect(0, 0, 1000, 600))
-    FC.Draw_grid(surface,manager,start_x,end_x,start_y,end_y)
+    if(isGrid):
+        FC.Draw_grid(surface,manager,start_x,end_x,start_y,end_y)
     FC.Draw_grid.xy(surface,manager,start_x,end_x,start_y,end_y)
 #############Phần điều khiển####################
-bt_line = pygame_gui.elements.UIButton(
-                            relative_rect=pygame.Rect(manager_x_axis+5,240,150,30),
-                            text='Duong thang',
+bt_DX_Ox = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,10,150,30),# (x bắt đầu, y bắt đầu, width, height)
+                            text='Doi xung Ox',
                             manager=manager
                         )
-X_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+30,20,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis,20,40,30),
-                            text="X",
-                            manager=manager)
-Y_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+110,20,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis+80,20,40,30),
-                            text="Y",
-                            manager=manager)
-Z_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+30,60,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis,60,40,30),
-                            text="Z",
-                            manager=manager)
-L_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+60,100,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis+10,100,40,30),
-                            text="Dai",
-                            manager=manager)
-W_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+60,140,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis+10,140,40,30),
-                            text="Rong",
-                            manager=manager)
-H_axis = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(manager_x_axis+60,180,40,30),
-                            manager=manager)
-pygame_gui.elements.UILabel(relative_rect=pygame.Rect(manager_x_axis+10,180,40,30),
-                            text="Cao",
-                            manager=manager)
-
-# bt_dash = pygame_gui.elements.UIButton(
-#                             relative_rect=pygame.Rect(manager_x_axis+5,140,150,30),
-#                             text='Net dut',
-#                             manager=manager
-#                         )
-# bt_dash_dot = pygame_gui.elements.UIButton(
-#                             relative_rect=pygame.Rect(manager_x_axis+5,180,150,30),
-#                             text='Net cham gach',
-#                             manager=manager
-#                         )
-# bt_dash_dash_dot = pygame_gui.elements.UIButton(
-#                             relative_rect=pygame.Rect(manager_x_axis+5,220,150,30),
-#                             text='Hai cham gach',
-#                             manager=manager
-#                         )
-# bt_arrow = pygame_gui.elements.UIButton(
-#                             relative_rect=pygame.Rect(manager_x_axis+5,260,150,30),
-#                             text='Net mui ten',
-#                             manager=manager
-#                         )
-# bt_rect = pygame_gui.elements.UIButton(
-#                             relative_rect=pygame.Rect(manager_x_axis+5,300,150,30),
-#                             text='Hinh chu nhat',
-#                             manager=manager
-#                         )
+bt_DX_Oy = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,50,150,30),# (x bắt đầu, y bắt đầu, width, height)
+                            text='Doi xung Oy',
+                            manager=manager
+)
+bt_DX_O = pygame_gui.elements.UIButton(
+                            relative_rect=pygame.Rect(manager_x_axis+5,90,150,30),# (x bắt đầu, y bắt đầu, width, height)
+                            text='Doi xung tam O',
+                            manager=manager
+)
 bt_clear = pygame_gui.elements.UIButton(
-                            relative_rect=pygame.Rect(manager_x_axis+5,350,150,30),
-                            text='Clear',
+                            relative_rect=pygame.Rect(manager_x_axis+5,130,150,30),
+                            text='Bat/Tat grid',
                             manager=manager
                         )
 ##################################################
 isRunning = True
 clock = pygame.time.Clock()
-FC.Draw_grid(surface,manager,start_x,end_x,start_y,end_y)
-FC.Draw_grid.xy(surface,manager,start_x,end_x,start_y,end_y)
 #################################### DORAEMON #######################################
 face= FC.Draw.ellipse_2(20,20,blue_color,0,140)
 face = np.concatenate((face,FC.Draw.ellipse_2(20,20,black_color,220,335),FC.Draw.ellipse_2(20,20,blue_color,336,360),FC.Draw.rect(-12,-16,12,-18,red_color)))
@@ -151,15 +112,24 @@ may2 = FC.Draw.ellipse_2(8,8,pink_dark_color,80,180)
 may2 = FC.Bien_doi.Nhan_MT(may2,FC.Bien_doi.MT_tinh_tien(0,160))
 may = np.concatenate((may,may1,may2,FC.Draw.line(0,0,0,-40,pink_dark_color)))
 may = FC.Bien_doi.phep_quay(may,0,0,-90)
-may = FC.Bien_doi.Nhan_MT(may,FC.Bien_doi.MT_tinh_tien(0,-200))
+# may = FC.Bien_doi.Nhan_MT(may,FC.Bien_doi.MT_tinh_tien(0,-200))
 a,b = FC.Convert_coordinate.real2mon(20,3)  
-#may_to_mau = []
+may_to_mau = []
+FC.Put_pixel(surface,may)
+may_to_mau= FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may_to_mau)
+may = np.concatenate((may,may_to_mau))
 may_animation = np.copy(may)
-may_animation = FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(-750,10))
-#FC.Put_pixel(surface,may)
-#may_to_mau= FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may_to_mau)
+may_animation = FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(-700,-190))
 #mattroi
 sun = FC.Draw.circle_fill(-70,40,15,orange_color_sun,orange_color_sun)
+#nui
+nui = FC.Draw.line(0,0,40,50,black_color)
+nui = np.concatenate((nui,FC.Draw.line(80,0,40,50,black_color),FC.Draw.line(0,0,80,0,black_color)))
+nui= FC.Bien_doi.Nhan_MT(nui,FC.Bien_doi.MT_tinh_tien(-620,100))
+
+nui1 = FC.Draw.line(17,24,25,35,black_color)
+nui1 = np.concatenate((nui1,FC.Draw.line(50,0,25,35,black_color),FC.Draw.line(0,0,50,0,black_color)))
+nui1= FC.Bien_doi.Nhan_MT(nui1,FC.Bien_doi.MT_tinh_tien(-400,100))
 #sunshine
 sunshine1 = FC.Draw.line(0,20,0,25,orange_color_sun)
 sunshine1 = np.concatenate((sunshine1,FC.Draw.line(0,-20,0,-25,orange_color_sun),
@@ -174,32 +144,30 @@ alpha = 10
 scale_x = 1
 scale_y = 1
 step = 0
-may_step =0;
-may_move_dir = 5;
+may_step =0
+may_move_dir = 5
 is_scale_up = True
+isGrid = True
 while isRunning:
     time_delta = clock.tick(24)/1000.0
-    surface.blit(background,(manager_x_axis,0))#ghi đè lên cửa sổ
-    # face = np.concatenate((face,FC.Dr))
-    # a,b = FC.Convert_coordinate.real2mon(0,0)
-    # mt=np.dot(FC.Bien_doi.MT_tinh_tien(-a,-b),FC.Bien_doi.MT_quay(-20))
-    # mt=np.dot(mt,FC.Bien_doi.MT_tinh_tien(a,b))
-    # face = FC.Bien_doi.Nhan_MT(face,mt)
+    if (isGrid):
+        FC.Draw_grid(surface,manager,start_x,end_x,start_y,end_y)
+    FC.Draw_grid.xy(surface,manager,start_x,end_x,start_y,end_y)
     count +=1
     if (count>12):
         bool = -bool
         count =0
     doraemon = FC.Bien_doi.Nhan_MT(doraemon,FC.Bien_doi.MT_tinh_tien(0,bool))
-
+    FC.Put_pixel(surface,nui)
+    FC.Put_pixel(surface,nui1)
     #####sunshine logic
     sunshine = FC.Bien_doi.phep_quay(temp_sunshine1,-70,40,alpha)
     temp_sunshine1=np.copy(sunshine1)
     alpha+=5
     #####
-    FC.Put_pixel(surface,doraemon)
     
     ####may logic###
-    if(may_step==200):
+    if(may_step==240):
        may_animation =FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(-(may_step*may_move_dir),0))
        may_step =0
     may_animation = FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(may_move_dir,0))
@@ -224,59 +192,41 @@ while isRunning:
     FC.Put_pixel(surface,sunshine)
     FC.Put_pixel(surface, sun)
     FC.Put_pixel(surface, may_animation)
+    FC.Put_pixel(surface,doraemon)
  
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                # try:
-                    if event.ui_element == bt_line:
-                        may_step = 200-may_step;
-                        may_move_dir = -may_move_dir;
-                        ox,oy = FC.Convert_coordinate.real2mon(0,0)
-                        mt_bien_doi = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_doi_xung(2))
-                        mt_bien_doi = np.dot(mt_bien_doi,FC.Bien_doi.MT_tinh_tien(ox,oy))
-                        doraemon = FC.Bien_doi.Nhan_MT(doraemon,mt_bien_doi)
-                    # if event.ui_element == bt_dash:
-                    #     x1=int(X1_axis.get_text())
-                    #     y1=int(Y1_axis.get_text())
-                    #     x2=int(X2_axis.get_text())
-                    #     y2=int(Y2_axis.get_text())
-                    #     FC.Draw.line(surface,x1,y1,x2,y2,red_color,1)
-                    # if event.ui_element == bt_dash_dot:
-                    #     x1=int(X1_axis.get_text())
-                    #     y1=int(Y1_axis.get_text())
-                    #     x2=int(X2_axis.get_text())
-                    #     y2=int(Y2_axis.get_text())
-                    #     FC.Draw.line(surface,x1,y1,x2,y2,red_color,2)
-                    # if event.ui_element == bt_dash_dash_dot:
-                    #     x1=int(X1_axis.get_text())
-                    #     y1=int(Y1_axis.get_text())
-                    #     x2=int(X2_axis.get_text())
-                    #     y2=int(Y2_axis.get_text())
-                    #     FC.Draw.line(surface,x1,y1,x2,y2,red_color,3)
-                    # if event.ui_element == bt_arrow:
-                    #     x1=int(X1_axis.get_text())
-                    #     y1=int(Y1_axis.get_text())
-                    #     x2=int(X2_axis.get_text())
-                    #     y2=int(Y2_axis.get_text())
-                    #     FC.Draw.line(surface,x1,y1,x2,y2,red_color,0)
-                    #     FC.Draw.arrow(surface,x1,y1,x2,y2,red_color)
-                    # if event.ui_element == bt_rect:
-                    #     x1=int(X1_axis.get_text())
-                    #     y1=int(Y1_axis.get_text())
-                    #     x2=int(X2_axis.get_text())
-                    #     y2=int(Y2_axis.get_text())
-                    #     FC.Draw.rect(surface,x1,y1,x2,y2,red_color)
-                        # FC.Draw.ellipse(surface,x1,y1,x2,y2,red_color)
-                    if event.ui_element == bt_clear:
-                        clear_screen()
-                # except ValueError:
-                #     easygui.msgbox("X and Y not be empty", title="ERROR")
+                if event.ui_element == bt_DX_Ox:
+                    ox,oy = FC.Convert_coordinate.real2mon(0,0)
+                    mt_bien_doi = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_doi_xung(1))
+                    mt_bien_doi = np.dot(mt_bien_doi,FC.Bien_doi.MT_tinh_tien(ox,oy))
+                    doraemon = FC.Bien_doi.Nhan_MT(doraemon,mt_bien_doi)
+                if event.ui_element == bt_DX_Oy:
+                    may_step = 200-may_step
+                    may_move_dir = -may_move_dir
+                    ox,oy = FC.Convert_coordinate.real2mon(0,0)
+                    mt_bien_doi = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_doi_xung(2))
+                    mt_bien_doi = np.dot(mt_bien_doi,FC.Bien_doi.MT_tinh_tien(ox,oy))
+                    doraemon = FC.Bien_doi.Nhan_MT(doraemon,mt_bien_doi)
+                if event.ui_element == bt_DX_O:
+                    ox,oy = FC.Convert_coordinate.real2mon(0,0)
+                    mt_bien_doi = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_doi_xung(3))
+                    mt_bien_doi = np.dot(mt_bien_doi,FC.Bien_doi.MT_tinh_tien(ox,oy))
+                    doraemon = FC.Bien_doi.Nhan_MT(doraemon,mt_bien_doi)
+                if event.ui_element == bt_clear:
+                    isGrid = not(isGrid)
         manager.process_events(event)
+    # x bắt đầu, y bắt đầu
+    surface.blit(background,(manager_x_axis,0))#ghi đè lên cửa sổ
+    surface.blit(background1,(0,0))#thanh bên trên
+    surface.blit(background2,(0,grid_y+21))#thanh bên dưới
+    surface.blit(background3,(0,20))#thanh bên trái
+    surface.blit(background4,(grid_x+21,20))#thanh bên phải
     manager.update(time_delta)
     manager.draw_ui(surface)
     pygame.display.flip()
     clock.tick(24)
-    clear_screen()
+    clear_screen(isGrid)

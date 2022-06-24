@@ -570,7 +570,7 @@ class Bien_doi():
         alpha = math.radians(alpha)
         return np.array([[math.cos(alpha),math.sin(alpha),0],[-math.sin(alpha),math.cos(alpha),0],[0,0,1]])
     def MT_doi_xung(type):
-        """type =2: Ox | type =1: Oy | type =3: tâm O"""
+        """type =1: Ox | type =2: Oy | type =3: tâm O"""
         if type==1:
             return np.array([[1,0,0],[0,-1,0],[0,0,1]])
         if type==2:
