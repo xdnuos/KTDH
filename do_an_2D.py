@@ -79,16 +79,19 @@ mong = FC.Bien_doi.Nhan_MT(mong,FC.Bien_doi.MT_tinh_tien(50,140))
 bung = FC.Draw.ellipse_2(20,15,black_color,180,300)
 bung = FC.Bien_doi.Nhan_MT(bung,FC.Bien_doi.MT_tinh_tien(70,140))
 chan = FC.Draw.line(15,-43,30,-42,blue_color)
-chan = np.concatenate((chan,FC.Draw.line(30,-25,32,-26,blue_color),FC.Draw.ellipse_fill(35,-35,6,8,black_color,white_color)))
-chuong = FC.Draw.circle_fill(-6,-20,2,yellow_color,yellow_color)
+chan = np.concatenate((chan,FC.Draw.line(30,-25,32,-26,blue_color),
+                        FC.Draw.ellipse_fill(35,-35,6,8,black_color,white_color)))# ban chan 792
+chuong = FC.Draw.circle_fill(-6,-20,2,yellow_color,yellow_color)#192
 tay = FC.Draw.line(3,-21,8,-14,black_color)
-tay = np.concatenate((tay,FC.Draw.line(13,-24,15,-17,black_color),FC.Draw.circle_fill(13,-13,4,black_color,white_color)))
+tay = np.concatenate((tay,FC.Draw.line(13,-24,15,-17,black_color),#45
+                    FC.Draw.circle_fill(13,-13,4,black_color,white_color)))#621
 bung_duoi = FC.Draw.ellipse_2(20,15,black_color,0,100)
-bung_duoi = FC.Bien_doi.Nhan_MT(bung_duoi,FC.Bien_doi.MT_tinh_tien(-25,200))
+bung_duoi = FC.Bien_doi.Nhan_MT(bung_duoi,FC.Bien_doi.MT_tinh_tien(-25,200))#93
 tui = FC.Draw.ellipse_2(8,8,black_color,30,100)
 tui = FC.Bien_doi.Nhan_MT(tui,FC.Bien_doi.MT_tinh_tien(0,200))
 tui = np.concatenate((tui,FC.Draw.line(0,-37,4,-33,black_color)))
-duoi = np.concatenate((FC.Draw.circle_fill(36,-18,2,red_color,red_color),FC.Draw.line(33,-20,30,-22,black_color)))
+duoi = np.concatenate((FC.Draw.circle_fill(36,-18,2,red_color,red_color),
+                        FC.Draw.line(33,-20,30,-22,black_color)))#204
 chong_chong = FC.Draw.ellipse_2(3,3,yellow_color,0,120)
 chong_chong = np.concatenate((chong_chong,FC.Draw.ellipse_2(3,3,yellow_color,270,360)))
 chong_chong = FC.Bien_doi.Nhan_MT(chong_chong,FC.Bien_doi.MT_tinh_tien(30,-100))
@@ -96,13 +99,15 @@ chong_chong = np.concatenate((chong_chong,FC.Draw.line(7,23,8,28,yellow_color)))
 canh_quat = FC.Draw.ellipse_2(6,3,black_color,0,360)
 canh_quat = FC.Bien_doi.phep_quay(canh_quat,0,0,10)
 canh_quat = FC.Bien_doi.Nhan_MT(canh_quat,FC.Bien_doi.MT_tinh_tien(40,-140))
-chong_chong = np.concatenate((chong_chong,canh_quat))
+chong_chong = np.concatenate((chong_chong,canh_quat))#153
 mieng = FC.Draw.ellipse_2(10,10,black_color,90,160)
 mieng = FC.Bien_doi.Nhan_MT(mieng,FC.Bien_doi.MT_tinh_tien(-90,20))
-chi_tiet_mat = np.concatenate((mui,mieng,FC.Draw.line(-8,0,1,6,black_color),FC.Draw.line(-5,-3,5,2,black_color),FC.Draw.line(-4,-6,5,-4,black_color),chuong,chong_chong))
-phan_than = np.concatenate((mong,bung,chan,duoi,bung_duoi))
-linh_kien = np.concatenate((tui,tay))
-doraemon = np.concatenate((dau,phan_than,linh_kien,chi_tiet_mat))
+chi_tiet_mat = np.concatenate((mui,mieng,FC.Draw.line(-8,0,1,6,black_color),
+                            FC.Draw.line(-5,-3,5,2,black_color),FC.Draw.line(-4,-6,5,-4,black_color),
+                            chuong,chong_chong))#669
+phan_than = np.concatenate((mong,bung,chan,duoi,bung_duoi))#1305
+linh_kien = np.concatenate((tui,tay))#666
+doraemon = np.concatenate((dau,phan_than,linh_kien,chi_tiet_mat))#3237
 #################################### MAY #######################################
 may = FC.Draw.ellipse_2(6,5,pink_dark_color,0,120)
 may = FC.Bien_doi.Nhan_MT(may,FC.Bien_doi.MT_tinh_tien(0,25))
@@ -148,6 +153,7 @@ may_step =0
 may_move_dir = 5
 is_scale_up = True
 isGrid = True
+font = pygame.font.SysFont(None, 24)
 while isRunning:
     time_delta = clock.tick(24)/1000.0
     if (isGrid):
@@ -219,6 +225,56 @@ while isRunning:
                 if event.ui_element == bt_clear:
                     isGrid = not(isGrid)
         manager.process_events(event)
+    ################################################################
+    img = font.render("THONG SO", True, black_color)
+    surface.blit(img, (1020, 180))
+    headX, headY = FC.Convert_coordinate.mon2real(doraemon[1,0],doraemon[1,1])
+    toadoHead = "%d,%d" %(headX+6, headY-20)
+    img = font.render("Head        " + toadoHead, True, black_color)
+    surface.blit(img, (1020, 200))
+
+    muiX, muiY = FC.Convert_coordinate.mon2real(doraemon[856,0],doraemon[856,1])
+    toadoMui = "%d,%d" %(muiX, muiY-2)
+    img = font.render("Nose        " + toadoMui, True, black_color)
+    surface.blit(img, (1020, 220))
+
+    #964
+    chuongX, chuongY = FC.Convert_coordinate.mon2real(doraemon[964,0],doraemon[964,1])
+    toadoChuong = "%d,%d" %(chuongX, chuongY-2)
+    img = font.render("Bell        " + toadoChuong, True, black_color)
+    surface.blit(img, (1020, 240))
+
+    #664
+    tayX, tayY = FC.Convert_coordinate.mon2real(doraemon[664,0],doraemon[664,1])
+    toadoTay = "%d,%d" %(tayX, tayY-4)
+    img = font.render("Hand        " + toadoTay, True, black_color)
+    surface.blit(img, (1020, 260))
+
+    #535
+    duoiX, duoiY = FC.Convert_coordinate.mon2real(doraemon[535,0],doraemon[535,1])
+    toadoDuoi = "%d,%d" %(duoiX, duoiY-2)
+    img = font.render("Tail        " + toadoDuoi, True, black_color)
+    surface.blit(img, (1020, 280))    
+    #271
+    chanX, chanY = FC.Convert_coordinate.mon2real(doraemon[271,0],doraemon[271,1])
+    toadoChan = "%d,%d" %(chanX-2, chanY-8)
+    img = font.render("Foot        " + toadoChan, True, black_color)
+    surface.blit(img, (1020, 300))
+
+    sunX, sunY = FC.Convert_coordinate.mon2real(-70,40)
+    toadoSun = "%d,%d" %(sunX, sunY)
+    img = font.render("Sun        " + toadoSun, True, black_color)
+    surface.blit(img, (1020, 320))
+    #80
+    cloudX, cloudY = FC.Convert_coordinate.mon2real(may_animation[80,0],may_animation[80,1])
+    toadoCloud = "%d,%d" %(cloudX, cloudY)
+    img = font.render("Cloud        " + toadoCloud, True, black_color)
+    surface.blit(img, (1020, 340))
+    #80
+    nuiX, nuiY = FC.Convert_coordinate.mon2real(-360,-100)
+    toadoNui = "%d,%d" %(nuiX, nuiY)
+    img = font.render("Mountain     " + toadoNui, True, black_color)
+    surface.blit(img, (1020, 360))
     # x bắt đầu, y bắt đầu
     surface.blit(background,(manager_x_axis,0))#ghi đè lên cửa sổ
     surface.blit(background1,(0,0))#thanh bên trên
