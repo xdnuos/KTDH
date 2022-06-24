@@ -1,13 +1,17 @@
 # Importing the library
 import math
+from turtle import color
+import turtle
 import easygui
 from time import sleep
+from matplotlib.pyplot import sca
 import pygame
 import all_func as FC
 import pygame_gui
 from khaibao import *
 import numpy as np
 # Initialing Color
+
 # Initializing Pygame
 pygame.init()
 # Initializing surface
@@ -147,14 +151,34 @@ may2 = FC.Draw.ellipse_2(8,8,pink_dark_color,80,180)
 may2 = FC.Bien_doi.Nhan_MT(may2,FC.Bien_doi.MT_tinh_tien(0,160))
 may = np.concatenate((may,may1,may2,FC.Draw.line(0,0,0,-40,pink_dark_color)))
 may = FC.Bien_doi.phep_quay(may,0,0,-90)
-a,b = FC.Convert_coordinate.real2mon(20,3)
-FC.Put_pixel(surface,may)
-may_to_mau = []
-may_to_mau= FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may_to_mau)
+may = FC.Bien_doi.Nhan_MT(may,FC.Bien_doi.MT_tinh_tien(0,-200))
+a,b = FC.Convert_coordinate.real2mon(20,3)  
+#may_to_mau = []
+may_animation = np.copy(may)
+may_animation = FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(-750,10))
+#FC.Put_pixel(surface,may)
+#may_to_mau= FC.To_mau.loang(surface,a,b,pink_dark_color,pink_color,may_to_mau)
+#mattroi
+sun = FC.Draw.circle_fill(-70,40,15,orange_color_sun,orange_color_sun)
+#sunshine
+sunshine1 = FC.Draw.line(0,20,0,25,orange_color_sun)
+sunshine1 = np.concatenate((sunshine1,FC.Draw.line(0,-20,0,-25,orange_color_sun),
+                            FC.Draw.line(-20,0,-25,0,orange_color_sun),FC.Draw.line(20,0,25,0,orange_color_sun)))
+sunshine1=np.concatenate((sunshine1,FC.Draw.line(15,15,19,19,orange_color_sun),FC.Draw.line(-15,15,-19,19,orange_color_sun),
+                          FC.Draw.line(15,-15,19,-19,orange_color_sun),FC.Draw.line(-15,-15,-19,-19,orange_color_sun)))
+sunshine1 = FC.Bien_doi.Nhan_MT(sunshine1,FC.Bien_doi.MT_tinh_tien(-350,-200))
+temp_sunshine1=np.copy(sunshine1)
 count =0
 bool = 5
+alpha = 10
+scale_x = 1
+scale_y = 1
+step = 0
+may_step =0;
+may_move_dir = 5;
+is_scale_up = True
 while isRunning:
-    time_delta = clock.tick(60)/1000.0
+    time_delta = clock.tick(24)/1000.0
     surface.blit(background,(manager_x_axis,0))#ghi đè lên cửa sổ
     # face = np.concatenate((face,FC.Dr))
     # a,b = FC.Convert_coordinate.real2mon(0,0)
@@ -162,13 +186,45 @@ while isRunning:
     # mt=np.dot(mt,FC.Bien_doi.MT_tinh_tien(a,b))
     # face = FC.Bien_doi.Nhan_MT(face,mt)
     count +=1
-    if (count>10):
+    if (count>12):
         bool = -bool
         count =0
     doraemon = FC.Bien_doi.Nhan_MT(doraemon,FC.Bien_doi.MT_tinh_tien(0,bool))
+
+    #####sunshine logic
+    sunshine = FC.Bien_doi.phep_quay(temp_sunshine1,-70,40,alpha)
+    temp_sunshine1=np.copy(sunshine1)
+    alpha+=5
+    #####
     FC.Put_pixel(surface,doraemon)
-    FC.Put_pixel(surface,may)
-    FC.Put_pixel(surface,may_to_mau)
+    
+    ####may logic###
+    if(may_step==200):
+       may_animation =FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(-(may_step*may_move_dir),0))
+       may_step =0
+    may_animation = FC.Bien_doi.Nhan_MT(may_animation,FC.Bien_doi.MT_tinh_tien(may_move_dir,0))
+    may_step+=1
+    ####ty le###
+    step+=1
+    if (step > 4 and is_scale_up):
+        scale_x = 0.95
+        scale_y = 0.95
+        step = 0
+        is_scale_up = False
+    if (step > 1 and not is_scale_up ):
+        scale_x = 1
+        scale_y = 1
+        sun = FC.Draw.circle_fill(-70,40,15,orange_color_sun,orange_color_sun)
+        step = 0
+        is_scale_up = True
+    ox,oy = FC.Convert_coordinate.real2mon(-70,40)
+    mt_bien_doi_ty_le = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_ti_le(scale_x,scale_y))
+    mt_bien_doi_ty_le = np.dot(mt_bien_doi_ty_le,FC.Bien_doi.MT_tinh_tien(ox,oy))
+    sun = FC.Bien_doi.Nhan_MT(sun, mt_bien_doi_ty_le)
+    FC.Put_pixel(surface,sunshine)
+    FC.Put_pixel(surface, sun)
+    FC.Put_pixel(surface, may_animation)
+ 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
@@ -176,6 +232,8 @@ while isRunning:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 # try:
                     if event.ui_element == bt_line:
+                        may_step = 200-may_step;
+                        may_move_dir = -may_move_dir;
                         ox,oy = FC.Convert_coordinate.real2mon(0,0)
                         mt_bien_doi = np.dot(FC.Bien_doi.MT_tinh_tien(-ox,-oy),FC.Bien_doi.MT_doi_xung(2))
                         mt_bien_doi = np.dot(mt_bien_doi,FC.Bien_doi.MT_tinh_tien(ox,oy))

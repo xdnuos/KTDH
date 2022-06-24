@@ -3,6 +3,11 @@ white_color = (255,255,255)
 gray_color = (178, 190, 181)
 gray_black_color =(90,90,90)
 black_color=(0,0,0)
+blue_color = (0,0,25)
+yellow_color = (255, 255, 0)
+orange_color_sun =(249, 215, 28)
+pink_dark_color = (231,84,128)
+pink_color = (255,188,217)
 UNIT=5
 #toạ độ kết thúc của lưới toạ độ
 end_x = 1000
